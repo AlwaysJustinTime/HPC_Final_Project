@@ -1,0 +1,3 @@
+DATA_PER_FILE = [10,20,30,40]
+TRUE_CLUSTERS_NUMBERS = [2,3,4,5]
+FOLDER_NAMES = ["suite_"+str(num) for num in DATA_PER_FILE]
