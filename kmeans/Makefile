@@ -3,6 +3,7 @@ SM := 35
 
 GCC := g++
 NVCC := nvcc
+MPICC := mpicc
 
 # Remove function
 RM = rm -f
@@ -19,11 +20,13 @@ GENCODE_FLAGS := -gencode arch=compute_$(SM),code=sm_$(SM)
 LIB_FLAGS := -lcudadevrt -lcudart
 
 NVCCFLAGS := -O3
-GccFLAGS = -fopenmp -O3 
+GccFLAGS = -fopenmp -O3 -lm
+MPIccFLAGS = -O3 -lm
 
 # The build target executable:
-TARGET  = kmeans
-TARGETS = $(TARGET)
+TARGETMPI  = kmeans_mpi
+TARGETOMP = kmeans_omp
+TARGETS = $(TARGETMPI) $(TARGETOMP)
 
 all: build
 
@@ -33,10 +36,10 @@ debug: all
 
 build: $(TARGETS)
 
-$(TARGET): src/main.o
-	$(NVCC) $(NVCCFLAGS) $(opencvINC) $^ -o $@ $(GENCODE_FLAGS) $(opencvLIB) -link 
+$(TARGETMPI): src/mainMPI.cpp src/config.h
+	$(MPICC) $(MPIccFLAGS) $(opencvLIB) $(opencvINC) -c $< -o $@
 
-src/main.o: src/main.cpp src/config.h
+$(TARGETOMP): src/mainOMP.cpp src/config.h
 	$(GCC) $(GccFLAGS) $(opencvLIB) $(opencvINC) -c $< -o $@
 
 %: src/%.cpp
