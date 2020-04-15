@@ -6,7 +6,7 @@
 #include "opencv2/imgproc.hpp"
 #include <iostream>
 
-#define NUM_ITERATIONS 1000
+#define NUM_ITERATIONS 5
 
 using namespace cv;
 using namespace std;
@@ -77,7 +77,7 @@ int main( int /*argc*/, char** /*argv*/ )
         }
         cout << "Compactness: " << compactness << endl;
 
-        imshow("clusters", img);
+        // imshow("clusters", img);
     }
 
     return 0;
