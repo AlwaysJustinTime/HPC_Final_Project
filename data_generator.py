@@ -1,10 +1,10 @@
 DATA_PER_FILE = [20,40,80,160]
 TRUE_CLUSTERS_NUMBERS = [2,3,4,5]
 HEAD_FOLDER_NAME = "data"
-FOLDER_NAMES = {num: "suite_"+str(num) for num in DATA_PER_FILE}
-FILE_NAMES = {num: "cluster_"+str(num)+".csv" for num in TRUE_CLUSTERS_NUMBERS}
+DATA_FILENAMES = {num: "suite_"+str(num) for num in DATA_PER_FILE}
+CLUSTER_FILENAMES = {num: "cluster_"+str(num)+".csv" for num in TRUE_CLUSTERS_NUMBERS}
 CLUSTER_STD = 0.25
-GRAPH_DATA = True
+GRAPH_DATA = False
 
 from sklearn.datasets.samples_generator import make_blobs
 import matplotlib.pyplot as plt
@@ -37,9 +37,9 @@ def gen_data(number_samples, centers, filepath):
 centers = {cluster_num:get_unit_circle_centers(cluster_num) for cluster_num in TRUE_CLUSTERS_NUMBERS}
 
 for num_of_data in DATA_PER_FILE:
-    folder_name = os.path.join(HEAD_FOLDER_NAME, FOLDER_NAMES[num_of_data])
-    if not os.path.exists(folder_name):
-        os.makedirs(folder_name)
+    if not os.path.exists(HEAD_FOLDER_NAME):
+        os.makedirs(HEAD_FOLDER_NAME)
     for cluster_num in TRUE_CLUSTERS_NUMBERS:
-        filepath = os.path.join(folder_name, FILE_NAMES[cluster_num])
+        filename = DATA_FILENAMES[num_of_data] + "_" + CLUSTER_FILENAMES[cluster_num]
+        filepath = os.path.join(HEAD_FOLDER_NAME, filename)
         gen_data(num_of_data, centers[cluster_num], filepath)
