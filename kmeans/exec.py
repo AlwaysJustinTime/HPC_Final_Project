@@ -8,7 +8,7 @@ FOLDER_NAMES = {num: "suite_"+str(num) for num in DATA_PER_FILE}
 FILE_NAMES = {num: "cluster_"+str(num)+".csv" for num in TRUE_CLUSTERS_NUMBERS}
 
 
-os.system("module load cuda/9.2")
+#os.system("module load cuda/9.2")
 os.system("module load opencv/3.4.3-contrib")
 os.system("clear")
 os.system("cd /home/vandalovsky.v/HPC_CLASS/HPC_Final_Project/kmeans")

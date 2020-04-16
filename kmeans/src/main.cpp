@@ -14,6 +14,7 @@
 using namespace cv;
 using namespace std;
 
+int number_samples;
 
 // Timer function
 double CLOCK() {
@@ -54,30 +55,47 @@ Mat readCSV(char* filename, Mat* true_labels) {
         all_labels.push_back(label);
     }
 
+    number_samples = (int)all_data.size();
     // Now add all the data into a Mat element
-    Mat vect = Mat::zeros((int)all_data.size(), (int)all_data[0].size(), CV_32FC1);
-    true_labels = Mat::zeros((int)all_labels.size(), 1, CV_32S);
+    Mat vect = Mat::zeros(number_samples, (int)all_data[0].size(), CV_32FC1);
+    *true_labels = Mat::zeros(number_samples, 1, CV_32S);
     // // Loop over vectors and add the data
-    for(int rows = 0; rows < (int)all_data.size(); rows++){
+    for(int rows = 0; rows < number_samples; rows++){
         for(int cols= 0; cols< (int)all_data[0].size(); cols++){
             vect.at<float>(rows,cols) = all_data[rows][cols]; 
         }
-        true_labels.at<int>(rows) = all_labels[rows];
+        true_labels->at<int>(rows) = all_labels[rows];
     }
 
     // cout << "M = " << endl << " " << vect << endl;
     return vect;
 }
 
-int evaluate_labels(mat true_labels, mat guess_labels)
+int evaluate_labels(Mat true_labels, Mat guess_labels)
 {
-    int number_correct = 0;
-    for (int i = 0; i < true_labels.size(); i++)
+    int true_label_counts[10];
+    int guess_label_counts[10];
+    // intialize to zero
+    for (int i = 0; i < 10; i++)
     {
-        if (true_labels.at<int>(i) == guess_labels.at<int>(i))
-            number_correct++;
+        true_label_counts[i] = 0;
+        guess_label_counts[i] = 0;
     }
-    return number_correct;
+
+    for (int i = 0; i < number_samples; i++)
+    {
+        true_label_counts[true_labels.at<int>(i)]++;
+        guess_label_counts[guess_labels.at<int>(i)]++;
+    }
+    
+    int number_incorrect = 0;
+    int i = 0;
+    while (true_label_counts[i] > 0)
+    {
+        number_incorrect += abs(true_label_counts[i] - guess_label_counts[i]);
+        i++;
+    }
+    return (number_samples-(number_incorrect/2));
 }
 
 // static void help()
@@ -106,19 +124,19 @@ int main( int argc, char** argv )
     char* fname= argv[2];
     
     // get points and true  from CSV
-    Mat *true_labels
-    Mat points = readCSV(fname, true_labels);
+    Mat true_labels;
+    Mat points = readCSV(fname, &true_labels);
 
     double compactness = kmeans(points, clusterCount, guess_labels,
         TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 10, 1.0),
             3, KMEANS_PP_CENTERS, centers);
     cout << "Compactness: " << compactness << endl;
 
-    int number_correct = evaluate_labels(true_labels, guess_labels);
-    cout << "Accuracy: " << number_correct << "/" << true_labels.size() << endl;
-
     end_time = CLOCK();
     cout << "OpemMP execution time: " << end_time - start_time << " ms" << endl;
+
+    int number_incorrect = evaluate_labels(true_labels, guess_labels);
+    cout << "Accuracy: " << number_incorrect << "/" << number_samples << endl;
 
     return 0;
 }
