@@ -18,9 +18,9 @@ def get_unit_circle_centers(cluster_num):
     return answer
 
 def graph_data(data, labels, centers):
-    plt.scatter(*zip(*centers), color="red", s=20, label="Centers")
     for i in range(len(centers)):
         plt.scatter(data[labels == i, 0], data[labels == i, 1], s=10, label="Cluster"+str(i))
+    plt.scatter(*zip(*centers), color="black", s=20, label="Centers")
     plt.axis([-2, 2, -2, 2])
     plt.show()
 
