@@ -167,8 +167,8 @@ int main(int argc, char *argv[])
 	double *recv_y = NULL;
 	int *recv_assign = NULL;
 
-    double start_time, end_time;
-
+	double start_time, end_time;
+	
 	if(world_rank == 0)
 	{
 		if(argc != 3)
@@ -177,7 +177,6 @@ int main(int argc, char *argv[])
             cout << "<cluster count> <filename>" << endl;
 			exit(-1);
 		}
-
         start_time = CLOCK();
 
 

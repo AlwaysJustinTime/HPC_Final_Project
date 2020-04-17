@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import os
 
-DATA_PER_FILE = [20,40,80,160]
+DATA_PER_FILE = [20000,40000,80000,160000]
 TRUE_CLUSTERS_NUMBERS = [2,3,4,5]
 HEAD_FOLDER_NAME = "data"
 FOLDER_NAMES = {num: "suite_"+str(num) for num in DATA_PER_FILE}
@@ -18,22 +18,23 @@ os.system(" rm -rf results/*.out;")
 
 nodes = 1
 tasksPerNode = 1 
-
+TASK_OPTIONS = [1, 2, 4, 8]
 
 # os.system("srun --export=ALL --nodes=1 --tasks-per-node=1 --time=0:10:00 --output=results/result-kmeans-%j.out kmeans 2 ../data/suite_160/cluster_2.csv")
-for t in range(1,5):
-    tasksPerNode = t
+for t in TASK_OPTIONS:
+    nodes = t
     for dataSize in DATA_PER_FILE:
         for clusterNum in TRUE_CLUSTERS_NUMBERS:
             
             strCluster = str(clusterNum)
             strDataSize = str(dataSize)
             strTasks = str(tasksPerNode)
-            print "launching run with data size = " + strDataSize + " & cluster # = " + strCluster + " & tasks = " + strTasks
+            strNodes = str(nodes)
+            print "launching run with data size = " + strDataSize + " & cluster # = " + strCluster + " & nodes = " + strNodes
 
             srun_str = "srun --export=ALL --time=0:10:00"
-            srun_str += " --nodes=" + str(nodes) + " --tasks-per-node=" + strTasks
-            srun_str += " --output=results/result-kmeansmpi-" + strDataSize + "-" + strCluster + "-" + strTasks + ".out"
+            srun_str += " --nodes=" + strNodes + " --tasks-per-node=" + strTasks
+            srun_str += " --output=results/result-kmeansmpi-" + strDataSize + "-" + strCluster + "-" + strNodes + ".out"
             srun_str += " mpirun --mca btl_base_warn_component_unused 0"
             srun_str += " kmeans_mpi "
 
