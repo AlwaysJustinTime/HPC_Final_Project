@@ -24,7 +24,7 @@ double CLOCK() {
 
 
 // to read the given file into a cv::Mat
-Mat readCSV(char* filename) {
+Mat readCSV(char* filename, Mat* true_labels) {
     ifstream inputfile (filename, ifstream::in);
     string current_line;
     // vector allows you to add data without knowing the exact size beforehand
@@ -56,18 +56,29 @@ Mat readCSV(char* filename) {
 
     // Now add all the data into a Mat element
     Mat vect = Mat::zeros((int)all_data.size(), (int)all_data[0].size(), CV_32FC1);
+    true_labels = Mat::zeros((int)all_labels.size(), 1, CV_32S);
     // // Loop over vectors and add the data
     for(int rows = 0; rows < (int)all_data.size(); rows++){
         for(int cols= 0; cols< (int)all_data[0].size(); cols++){
             vect.at<float>(rows,cols) = all_data[rows][cols]; 
         }
+        true_labels.at<int>(rows) = all_labels[rows];
     }
 
     // cout << "M = " << endl << " " << vect << endl;
     return vect;
 }
 
-
+int evaluate_labels(mat true_labels, mat guess_labels)
+{
+    int number_correct = 0;
+    for (int i = 0; i < true_labels.size(); i++)
+    {
+        if (true_labels.at<int>(i) == guess_labels.at<int>(i))
+            number_correct++;
+    }
+    return number_correct;
+}
 
 // static void help()
 // {
@@ -88,22 +99,23 @@ int main( int argc, char** argv )
     double start_time, end_time;
     start_time = CLOCK();
 
-    Mat labels;
+    Mat guess_labels;
     std::vector<Point2f> centers;
     int i;
     int clusterCount = atoi(argv[1]);
     char* fname= argv[2];
+    
+    // get points and true  from CSV
+    Mat *true_labels
+    Mat points = readCSV(fname, true_labels);
 
-    Mat points = readCSV(fname);
-
-
-    double compactness = kmeans(points, clusterCount, labels,
+    double compactness = kmeans(points, clusterCount, guess_labels,
         TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 10, 1.0),
             3, KMEANS_PP_CENTERS, centers);
     cout << "Compactness: " << compactness << endl;
 
-
-
+    int number_correct = evaluate_labels(true_labels, guess_labels);
+    cout << "Accuracy: " << number_correct << "/" << true_labels.size() << endl;
 
     end_time = CLOCK();
     cout << "OpemMP execution time: " << end_time - start_time << " ms" << endl;
