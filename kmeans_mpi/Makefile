@@ -3,6 +3,7 @@ SM := 35
 
 GCC := g++
 NVCC := nvcc
+MPICC := mpic++
 
 # Remove function
 RM = rm -f
@@ -20,22 +21,24 @@ LIB_FLAGS := -lcudadevrt -lcudart
 
 NVCCFLAGS := -O3
 GccFLAGS = -fopenmp -O3 
+MPICCFLAGS = -O3 -lm
 
 # The build target executable:
-TARGET  = kmeans_cuda
+TARGET  = kmeans_mpi
 TARGETS = $(TARGET)
 
 all: build
 
 debug: GccFLAGS += -DDEBUG -g -Wall
 debug: NVCCFLAGS += -g -G
+debug: MPICCFLAGS += -g -G
 debug: all
 
 build: $(TARGETS)
 
 
-$(TARGET): src/main.cpp src/config.h
-	$(GCC) $(GccFLAGS) $(opencvLIB) $(opencvINC) $< -o $@
+$(TARGET): src/main.cpp
+	$(MPICC) $(MPICCFLAGS) $< -o $@
 	
 
 %: src/%.cpp

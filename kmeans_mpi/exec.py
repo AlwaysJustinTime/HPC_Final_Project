@@ -11,7 +11,7 @@ FILE_NAMES = {num: "cluster_"+str(num)+".csv" for num in TRUE_CLUSTERS_NUMBERS}
 os.system("module load cuda/9.2")
 os.system("module load opencv/3.4.3-contrib")
 os.system("clear")
-os.system("cd /home/vandalovsky.v/HPC_CLASS/HPC_Final_Project/kmeans")
+os.system("cd /home/vandalovsky.v/HPC_CLASS/HPC_Final_Project/kmeans_mpi")
 os.system("set -o xtrace")
 os.system(" rm -rf results/*.out;")
 
@@ -33,8 +33,9 @@ for t in range(1,5):
 
             srun_str = "srun --export=ALL --time=0:10:00"
             srun_str += " --nodes=" + str(nodes) + " --tasks-per-node=" + strTasks
-            srun_str += " --output=results/result-kmeans-" + strDataSize + "-" + strCluster + "-" + strTasks + ".out"
-            srun_str += " kmeans "
+            srun_str += " --output=results/result-kmeansmpi-" + strDataSize + "-" + strCluster + "-" + strTasks + ".out"
+            srun_str += " mpirun --mca btl_base_warn_component_unused 0"
+            srun_str += " kmeans_mpi "
 
             cli_args = strCluster + " ../data/suite_" + strDataSize + "_cluster_" + strCluster + ".csv"
             srun_str += cli_args
