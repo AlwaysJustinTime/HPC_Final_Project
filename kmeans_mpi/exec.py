@@ -18,7 +18,7 @@ os.system(" rm -rf results/*.out;")
 
 nodes = 1
 tasksPerNode = 1 
-TASK_OPTIONS = [1, 2, 4, 8]
+TASK_OPTIONS = [8]
 
 # os.system("srun --export=ALL --nodes=1 --tasks-per-node=1 --time=0:10:00 --output=results/result-kmeans-%j.out kmeans 2 ../data/suite_160/cluster_2.csv")
 for t in TASK_OPTIONS:
