@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import os
 
-DATA_PER_FILE = [20,40,80,160]
+DATA_PER_FILE = [1600000]
 TRUE_CLUSTERS_NUMBERS = [2,3,4,5]
 HEAD_FOLDER_NAME = "data"
 FOLDER_NAMES = {num: "suite_"+str(num) for num in DATA_PER_FILE}
@@ -21,8 +21,8 @@ tasksPerNode = 1
 
 
 # os.system("srun --export=ALL --nodes=1 --tasks-per-node=1 --time=0:10:00 --output=results/result-kmeans-%j.out kmeans 2 ../data/suite_160/cluster_2.csv")
-for t in range(1,5):
-    tasksPerNode = t
+for t in range(4):
+    tasksPerNode = 2**t
     for dataSize in DATA_PER_FILE:
         for clusterNum in TRUE_CLUSTERS_NUMBERS:
             

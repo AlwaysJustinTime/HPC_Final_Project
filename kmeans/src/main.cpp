@@ -128,7 +128,7 @@ int main( int argc, char** argv )
     Mat points = readCSV(fname, &true_labels);
 
     double compactness = kmeans(points, clusterCount, guess_labels,
-        TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 10, 1.0),
+        TermCriteria( TermCriteria::COUNT, 1000, 0),
             3, KMEANS_PP_CENTERS, centers);
     cout << "Compactness: " << compactness << endl;
 
